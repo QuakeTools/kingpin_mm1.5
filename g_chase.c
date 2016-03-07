@@ -22,7 +22,9 @@ void UpdateChaseCam(edict_t *ent)
 	ent->client->update_cam++;
 
 	// is our chase target gone?
-	if (!ent->client->chase_target->inuse) {
+	if (!ent->client->chase_target->inuse
+		|| ent->client->chase_target->client->pers.spectator == SPECTATING)
+	{
 		if(ent->client->update_cam>0)
         {
 		//	ent->client->ps = ent->client->temp_ps;
