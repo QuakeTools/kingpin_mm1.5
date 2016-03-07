@@ -50,6 +50,11 @@ cvar_t	*filterban;
 cvar_t	*sv_maxvelocity;
 cvar_t	*sv_gravity;
 
+#ifndef NET_ANTILAG	//et-xreal antilag
+cvar_t	*sv_antilag_noexp;
+cvar_t	*sv_antilag_botdelay;
+cvar_t	*sv_antilag;
+#endif
 cvar_t	*sv_rollspeed;
 cvar_t	*sv_rollangle;
 cvar_t	*gun_x;
@@ -748,6 +753,18 @@ void G_RunFrame (void)
 	AI_ProcessCombat ();
 
 
+#ifndef NET_ANTILAG	//et-xreal antilag
+	// store the client's current position for antilag traces
+	//added here b4 each player trys to do a lookup
+	//if (sv_antilag->value == 1){
+		for (i = 0; i < game.maxclients; i++)
+		{
+			ent = &g_edicts[1 + i];
+			G_StoreClientPosition(ent);
+		}
+//	}
+
+#endif
 	//
 	// treat each object in turn
 	// even the world gets a chance to think
