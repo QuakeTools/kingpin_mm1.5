@@ -211,9 +211,9 @@ float LerpAngle (float a1, float a2, float frac);
 // Ridah
 float AngleDiff (float a2, float a1);
 
-#ifndef NET_ANTILAG	//et-xreal antilag
+// NET_ANTILAG	//et-xreal antilag
 void            LerpPosition(vec3_t start, vec3_t end, float frac, vec3_t out);
-#endif
+// END_LAG
 #ifdef WIN32
 #define BOX_ON_PLANE_SIDE(emins, emaxs, p)	\
 	(((p)->type < 3)?						\

@@ -28,7 +28,7 @@ If you have questions concerning this license or the applicable additional terms
 
 //hypov8 anti lag file from et-xreal
 
-#ifndef NET_ANTILAG	//et-xreal antilag
+// NET_ANTILAG	//et-xreal antilag
 
 #include "g_local.h"
 #define DEBUGLAG 1
@@ -189,7 +189,7 @@ static void G_ReAdjustSingleClientPosition(edict_t * ent)
 G_AdjustClientPositions
 ================
 */
-static void G_AdjustClientPositions(edict_t * ent, int time, qboolean forward)
+static void G_AdjustClientPositions(edict_t * ent, int time, qboolean forward, edict_t * owner)
 {
 	int             i;
 	edict_t      *list;
@@ -198,7 +198,7 @@ static void G_AdjustClientPositions(edict_t * ent, int time, qboolean forward)
 	/* add some extra ping to all players. will add effects/value upto the players ping value */
 	/* eg. value=75. if the lowest ping is 50 in server and rest +100. */ 
 	/* 50 ping player will act as if 50ping. the rest will be like a 75 ping game */
-	/* is aimed to make all players even while will reduce aimbot accurecy */
+	/* is aimed to make all players even while will reduce aimbot accuracy */
 	if (sv_antilag_botdelay->value)
 		time += sv_antilag_botdelay->value;
 
@@ -208,17 +208,17 @@ static void G_AdjustClientPositions(edict_t * ent, int time, qboolean forward)
 		list = &g_edicts[1 + i];
 
 		// Gordon: ok lets test everything under the sun
-		if(list->client &&
-		   list->inuse &&
-		   (list->client->pers.team == TEAM_NONE
-		   || list->client->pers.team == TEAM_1
-		   || list->client->pers.team == TEAM_2)
-		   && (list != ent)  //hypov8 dont lookup self history
-		   /* && list->s.linked */
-		   && (list->health > 0) 
-		   /* && ent->client->chase_target == NULL */
-		   && list->client->pers.spectator == PLAYING	   /* &&!(list->client->ps.pm_flags & PMF_LIMBO) */
-		   && (list->client->ps.pmove.pm_type == PM_NORMAL))
+		if (list->client &&
+			list->inuse &&
+			(list->client->pers.team == TEAM_NONE
+			|| list->client->pers.team == TEAM_1
+			|| list->client->pers.team == TEAM_2)
+			&& (list != ent)  //hypov8 dont shoot ur self in the foot!!!
+			&& (list != owner) //hypo dont trace back person who created the entitiy
+			&& (list->health > 0) 
+			/* && ent->client->chase_target == NULL */
+			&& list->client->pers.spectator == PLAYING
+			&& (list->client->ps.pmove.pm_type == PM_NORMAL))
 		{
 			if(forward)
 			{
@@ -283,19 +283,20 @@ void G_ResetMarkers(edict_t * ent)
 G_HistoricalTraceBegin
 ================
 */
-void G_HistoricalTraceBegin(edict_t * ent)
+void G_HistoricalTraceBegin(edict_t * ent, edict_t * owner)
 {
 	int frameMinusPing;
-	if (sv_antilag->value == 1){
-		if (ent->movetype == MOVETYPE_FLYMISSILE)
+	if (sv_antilag->value == 1)
+	{
+		if (ent->antilagToTrace)
 		{
 			frameMinusPing = level.framenum * 100 - ent->antilagPingTimer;
-			G_AdjustClientPositions(ent, frameMinusPing, true); //set time relitive to explosives ping
+			G_AdjustClientPositions(ent, frameMinusPing, true, owner); //set time relitive to explosives ping
 		}
 		else
 		{
 			frameMinusPing = level.framenum * 100 - ent->client->ping;
-			G_AdjustClientPositions(ent, frameMinusPing, true);
+			G_AdjustClientPositions(ent, frameMinusPing, true, owner);
 		}
 	}
 }
@@ -305,10 +306,10 @@ void G_HistoricalTraceBegin(edict_t * ent)
 G_HistoricalTraceEnd
 ================
 */
-void G_HistoricalTraceEnd(edict_t * ent)
+void G_HistoricalTraceEnd(edict_t * ent, edict_t * owner)
 {
 	if (sv_antilag->value == 1)
-	G_AdjustClientPositions(ent, 0, false);
+		G_AdjustClientPositions(ent, 0, false, owner);
 }
 
-#endif
+// END_LAG

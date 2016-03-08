@@ -50,11 +50,12 @@ cvar_t	*filterban;
 cvar_t	*sv_maxvelocity;
 cvar_t	*sv_gravity;
 
-#ifndef NET_ANTILAG	//et-xreal antilag
+// NET_ANTILAG	//et-xreal antilag
 cvar_t	*sv_antilag_noexp;
 cvar_t	*sv_antilag_botdelay;
 cvar_t	*sv_antilag;
-#endif
+// END_LAG
+
 cvar_t	*sv_rollspeed;
 cvar_t	*sv_rollangle;
 cvar_t	*gun_x;
@@ -753,18 +754,17 @@ void G_RunFrame (void)
 	AI_ProcessCombat ();
 
 
-#ifndef NET_ANTILAG	//et-xreal antilag
+// NET_ANTILAG	//et-xreal antilag
 	// store the client's current position for antilag traces
-	//added here b4 each player trys to do a lookup
-	//if (sv_antilag->value == 1){
+	//added here b4 each player/entity trys to do a lookup
 		for (i = 0; i < game.maxclients; i++)
 		{
 			ent = &g_edicts[1 + i];
 			G_StoreClientPosition(ent);
 		}
-//	}
+// END_LAG
 
-#endif
+
 	//
 	// treat each object in turn
 	// even the world gets a chance to think
@@ -1013,7 +1013,25 @@ void G_RunFrame (void)
 		}
 		else
 		{
+
+// NET_ANTILAG	//et-xreal antilag
+			qboolean antilagtotrace = 0;
+			edict_t	*owner = NULL;
+
+			if (ent->antilagToTrace && !sv_antilag_noexp->value) //item will cause damage so back trace
+			{
+				antilagtotrace = 1; //incase item is removed from world
+				owner = ent->owner;
+				G_HistoricalTraceBegin(ent, owner);
+			}
+// END_LAG
+
 			G_RunEntity (ent);
+
+// NET_ANTILAG	//et-xreal antilag
+			if (antilagtotrace)
+				G_HistoricalTraceEnd(ent, owner);
+// END_LAG
 
 			// Ridah, fast walking speed
 			if (	(ent->cast_info.aiflags & AI_FASTWALK)

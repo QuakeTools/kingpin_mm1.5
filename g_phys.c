@@ -93,6 +93,7 @@ qboolean SV_RunThink (edict_t *ent)
 		// hack to stop crash bug
 		// gi.error ("NULL ent->think");
 	}
+
 	ent->think (ent);
 
 	return false;
@@ -859,29 +860,10 @@ void SV_Physics_Toss (edict_t *ent)
 
 // move origin
 	VectorScale (ent->velocity, FRAMETIME, move);
-#ifndef NET_ANTILAG	//et-xreal antilag
-	ent->antilagWasMissile = 0;
-	if (!sv_antilag_noexp->value)
-	{
-		if (ent->movetype == MOVETYPE_FLYMISSILE)
-		{
-			ent->antilagWasMissile = 1;
-			G_HistoricalTraceBegin(ent);
-		}
-	}
-#endif
+
 	trace = SV_PushEntity (ent, move);
 	if (!ent->inuse)
 	{
-#ifndef NET_ANTILAG	//et-xreal antilag
-		/*if rocket. it must have exploded*/
-		if (!sv_antilag_noexp->value)
-		{
-			//if (ent->movetype == MOVETYPE_FLYMISSILE) no longer a rocket
-			if (ent->antilagWasMissile == 1)
-				G_HistoricalTraceEnd(ent);
-		}
-#endif
 		return;
 	}
 
@@ -967,14 +949,7 @@ void SV_Physics_Toss (edict_t *ent)
 		VectorCopy (ent->s.origin, slave->s.origin);
 		gi.linkentity (slave);
 	}
-#ifndef NET_ANTILAG	//et-xreal antilag
-	if (!sv_antilag_noexp->value)
-	{
-		//if (ent->movetype == MOVETYPE_FLYMISSILE)
-		if (ent->antilagWasMissile == 1)
-			G_HistoricalTraceEnd(ent);
-	}
-#endif
+
 }
 // END JOSEPH
 

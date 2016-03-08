@@ -835,7 +835,7 @@ int Q_log2(int val)
 	return answer;
 }
 
-#ifndef NET_ANTILAG	//et-xreal antilag
+// NET_ANTILAG	//et-xreal antilag
 /*
 =================
 LerpPosition
@@ -850,7 +850,7 @@ void LerpPosition(vec3_t start, vec3_t end, float frac, vec3_t out)
 	VectorSubtract(end, start, dist);
 	VectorMA(start, frac, dist, out);
 }
-#endif
+// END_LAG
 
 
 //====================================================================================

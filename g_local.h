@@ -799,12 +799,12 @@ extern	cvar_t	*filterban;
 extern	cvar_t	*sv_gravity;
 extern	cvar_t	*sv_maxvelocity;
 
-#ifndef NET_ANTILAG	//et-xreal antilag
-
+// NET_ANTILAG	//et-xreal antilag
 extern	cvar_t	*sv_antilag_noexp;
 extern	cvar_t	*sv_antilag_botdelay;
 extern	cvar_t	*sv_antilag;
-#endif
+// END_LAG
+
 extern	cvar_t	*gun_x, *gun_y, *gun_z;
 extern	cvar_t	*sv_rollspeed;
 extern	cvar_t	*sv_rollangle;
@@ -1396,7 +1396,7 @@ typedef struct
 #endif
 } client_respawn_t;
 
-#ifndef NET_ANTILAG	//et-xreal antilag
+// NET_ANTILAG	//et-xreal antilag
 typedef struct
 {
 	vec3_t          mins;
@@ -1409,7 +1409,8 @@ typedef struct
 
 #define MAX_CLIENT_MARKERS 10 //for 250 ping and 20fps //or 500 ping & 10fps
 							//kp seems like its at 10fps???
-#endif
+// END_LAG
+
 // this structure is cleared on each PutClientInServer(),
 // except for 'client->pers'
 struct gclient_s
@@ -1536,15 +1537,11 @@ struct gclient_s
 	unsigned int update_cam;
 	int chasetype;
 
-#ifndef NET_ANTILAG	//et-xreal antilag 
-	int             topMarker;							// latest in the stack of player old frame data
+// NET_ANTILAG	//et-xreal antilag 
+	int             topMarker;							//latest in the stack of player old frame data
 	clientMarker_t  clientMarkers[MAX_CLIENT_MARKERS];	//hypov8 old frame data stored, cycles through next when full
-	clientMarker_t  backupMarker;						//hypo? holds old frame? temp?
-
-	//hypov8 disable for now. should we impliment head hitbox?
-	//gentity_t      *tempHead;	// Gordon: storing a temporary head for bullet head shot detection
-	//gentity_t      *tempLeg;	// Arnout: storing a temporary leg for bullet head shot detection
-#endif
+	clientMarker_t  backupMarker;						//hypov8 holds old frame. temp
+// END_LAG
 };
 
 
@@ -1895,10 +1892,11 @@ struct edict_s
 	char		*health_target3;
 
 	float		stand_if_idle_time;		// stand if crouching and not doing much
-#ifndef NET_ANTILAG	//et-xreal antilag
-	int antilagPingTimer; //hypov8 used to store delay(ping) in missiles for traces
-	int antilagWasMissile; // missile turnes into an explosion entity. so store it here
-#endif
+
+// NET_ANTILAG	//et-xreal antilag
+	int			antilagPingTimer; //hypov8 used to store delay(ping) in missiles for traces
+	qboolean	antilagToTrace;		//force temp entites to trace old players (flane chunk, grenade exp etc)
+// END_LAG
 
 //  Papa 	
 	int			vote;  // stores the players vote
@@ -1962,13 +1960,13 @@ extern int	num_followers;
 extern	int				num_object_bounds;
 extern	object_bounds_t	*g_objbnds[MAX_OBJECT_BOUNDS];
 
-#ifndef NET_ANTILAG	//et-xreal antilag
+// NET_ANTILAG	//et-xreal antilag
 // g_antilag.c
-void            G_HistoricalTraceBegin(edict_t * ent);
-void            G_HistoricalTraceEnd(edict_t * ent);
+void            G_HistoricalTraceBegin(edict_t * ent, edict_t * owner);
+void            G_HistoricalTraceEnd(edict_t * ent, edict_t * owner);
 void            G_ResetMarkers(edict_t * ent);
 void            G_StoreClientPosition(edict_t * ent);
-#endif
+// END_LAG
 
 // Papa 10.11.99 my globals phear them
 

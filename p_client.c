@@ -1459,9 +1459,6 @@ void respawn (edict_t *self)
 		// make sure on the last death frame
 //		self->s.frame = self->client->anim_end;
 
-#ifndef NET_ANTILAG	//et-xreal antilag
-			G_ResetMarkers(self);
-#endif
 		CopyToBodyQue (self);
 		PutClientInServer (self);
 
@@ -1474,10 +1471,10 @@ void respawn (edict_t *self)
 
 		self->client->respawn_time = level.time;
 
-#ifndef NET_ANTILAG	//et-xreal antilag
+// NET_ANTILAG	//et-xreal antilag
 		// show_bug.cgi?id=569
 		G_ResetMarkers(self);
-#endif
+// END_LAG
 		return;
 	}
 
@@ -2309,10 +2306,9 @@ void ClientBegin (edict_t *ent)
 		gi.SaveCurrentGame();
 		changing_levels = false;
 	}
-#ifndef NET_ANTILAG	//et-xreal antilag
-	// show_bug.cgi?id=569
+// NET_ANTILAG	//et-xreal antilag
 	G_ResetMarkers(ent);
-#endif
+// END_LAG
 }
 
 void maxrate_think(edict_t *self)

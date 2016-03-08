@@ -340,11 +340,12 @@ void InitGame (void)
 	sv_maxvelocity = gi.cvar ("sv_maxvelocity", "2000", 0);
 	sv_gravity = gi.cvar ("sv_gravity", "800", 0);
 
-#ifndef NET_ANTILAG	//et-xreal antilag
+// NET_ANTILAG	//et-xreal antilag
 	sv_antilag_noexp = gi.cvar("sv_antilag_noexp", "0", CVAR_SERVERINFO);
 	sv_antilag_botdelay = gi.cvar("sv_antilag_botdelay", "0", CVAR_SERVERINFO);
 	sv_antilag = gi.cvar("sv_antilag", "1", CVAR_SERVERINFO);
-#endif
+// END_LAG
+
 	// noset vars
 	dedicated = gi.cvar ("dedicated", "0", CVAR_NOSET);
 
