@@ -1454,6 +1454,13 @@ void CopyToBodyQue (edict_t *ent)
 
 void respawn (edict_t *self)
 {
+	if ((level.modeset != MATCH) && (level.modeset != TEAMPLAY))
+	{
+		self->deadflag = 0;
+		gi.dprintf("%s caught respawing after match\n", self->client->pers.netname);
+		return; //hypov8 dont respawn, fixes last person dying loosing there mouse pitch
+	}
+
 	if (deathmatch->value || coop->value)
 	{
 		// make sure on the last death frame
