@@ -2830,14 +2830,17 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 		i++;
 	}
 
-	if (!teamplay->value) ent->client->pers.spectator = PLAYING;
-
-/*	for (i=1;i<=maxclients->value;i++) {
-		if (g_edicts[i].inuse && g_edicts[i].client && g_edicts[i].client->pers.rconx[0]) {
+	if (!teamplay->value) 
+		ent->client->pers.spectator = PLAYING;
+/*
+	for (i=1;i<=maxclients->value;i++) 
+	{
+		if (g_edicts[i].inuse && g_edicts[i].client && g_edicts[i].client->pers.rconx[0]) 
+		{
 			cprintf(g_edicts+i,PRINT_HIGH,"%s is connecting\n",ent->client->pers.netname);
 		}
-	}*/
-
+	} 
+*/
 	return true;
 }
 

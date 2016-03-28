@@ -86,7 +86,7 @@
 #define PLAYING				0
 
 // the "gameversion" client command will print this plus compile date
-#define	GAMEVERSION	"Monkey Mod v1.52"
+#define	GAMEVERSION	"Monkey Mod v1.52 +lagless"
 
 // protocol bytes that can be directly added to messages
 #define	svc_muzzleflash		1
@@ -1407,7 +1407,7 @@ typedef struct
 	int             time;
 } clientMarker_t;
 
-#define MAX_CLIENT_MARKERS 10 //for 250 ping and 20fps //or 500 ping & 10fps
+#define MAX_CLIENT_MARKERS 10 //for 500 ping and 20fps //or 1000 ping & 10fps
 							//kp seems like its at 10fps???
 // END_LAG
 
@@ -1894,8 +1894,9 @@ struct edict_s
 	float		stand_if_idle_time;		// stand if crouching and not doing much
 
 // NET_ANTILAG	//et-xreal antilag
-	int			antilagPingTimer; //hypov8 used to store delay(ping) in missiles for traces
+	int			antilagPingTimer;	//hypov8 used to store delay(ping) in projectiles for traces
 	qboolean	antilagToTrace;		//force temp entites to trace old players (flane chunk, grenade exp etc)
+	qboolean	cl_noAntiLag;		//client varable to disable antilag
 // END_LAG
 
 //  Papa 	
